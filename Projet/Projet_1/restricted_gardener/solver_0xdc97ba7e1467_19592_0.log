@@ -1,0 +1,55 @@
+
+ACE v2.3 
+
+  instance
+    name:restricted_gardener
+
+  Loading variables...
+
+  Loading constraints...
+
+  domains
+    types:2  values:210  sizes:[2:10,10:19]
+  variables
+    count:29  arrays:3  degrees:[2:2,3:18,4:1,5:1...8:1,9:1,10:1,11:2]
+  constraints
+    count:30  specific:12  arities:[1:2,3:19,4:1,5:1...8:1,9:1,10:2,11:1]
+    distribution:[AllDifferentComplete:1,Extension1:2,Intension:18,Maximum:8,SumWeightedEQ:1]
+    intStructures:(2,shared:16)
+    wck:0.11  cpu:0.484  mem:16M83
+
+  Building solver... 
+
+  solver
+    guaranteedAC:false
+    wck:0.12  cpu:0.5  mem:19M19
+
+  preprocessing
+    effs:2  revisions:(54,useless=54)  values:200  removedByAC:10  unsat:false
+    wck:0.002  cpu:0.5  mem:19M19
+
+    run1  dpts:1..28  effs:172  fails:8  wrgs:8  wck:0.00  ngds:8  sols:1
+
+  global
+    effs:172  revisions:(822,useless=785)  ngds:8
+    stop:REACHED_GOAL  wrgs:8  sols:1  sol1Cpu:0.5
+    wck:0.13  cpu:0.515  mem:19M438
+
+
+  Solution 1 in JSON format:
+   {
+    garden: [1, 10, 9, 8, 7, 6, 5, 4, 3, 2],
+    number_visible_hedge: 2,
+    is_visible: [1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+    aux_gb: [10, 10, 10, 10, 10, 10, 10, 10]
+   }
+
+s SATISFIABLE
+
+v <instantiation id='sol1' type='solution'> <list> garden[] number_visible_hedge is_visible[] aux_gb[] </list> <values> 1 10 9 8 7 6 5 4 3 2   2   1 1 0x8   10x8 </values> </instantiation>
+
+d WRONG DECISIONS 8
+d FOUND SOLUTIONS 1
+d INCOMPLETE EXPLORATION
+
+c real time : 0.515

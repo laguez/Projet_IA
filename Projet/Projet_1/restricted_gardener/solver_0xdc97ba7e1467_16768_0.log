@@ -1,0 +1,43 @@
+
+ACE v2.3 
+
+  instance
+    name:restricted_gardener
+
+  Loading variables...
+
+  Loading constraints...
+
+  domains
+    types:2  values:441  sizes:[20:21,21:1]
+  variables
+    count:22  arrays:1  degrees:[1:21,2:1]
+  constraints
+    count:3  specific:2  arities:[1:1,2:1,20:1]
+    distribution:[AllDifferentComplete:1,Extension1:1,Intension:1]
+    intStructures:(1,shared:0)
+    wck:0.13  cpu:0.609  mem:13M993
+
+  Building solver... 
+
+  solver
+    guaranteedAC:true
+    wck:0.15  cpu:0.625  mem:16M931
+
+  preprocessing
+    effs:2  revisions:(1,useless=0)  values:401  unsat:true
+    wck:0.001  cpu:0.625  mem:16M931
+
+
+  global
+    effs:2  revisions:(1,useless=0)
+    stop:FULL_EXPLORATION
+    wck:0.15  cpu:0.625  mem:16M931
+
+s UNSATISFIABLE
+
+d WRONG DECISIONS 0
+d FOUND SOLUTIONS 0
+d COMPLETE EXPLORATION
+
+c real time : 0.625

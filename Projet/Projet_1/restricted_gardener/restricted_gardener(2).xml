@@ -1,0 +1,15 @@
+<instance format="XCSP3" type="CSP">
+  <variables>
+    <array id="garden" size="[20]"> 1..20 </array>
+    <var id="number_visible_hedge"> 1..20 </var>
+    <var id="count"> 0..20 </var>
+  </variables>
+  <constraints>
+    <allDifferent> garden[] </allDifferent>
+    <group>
+      <intension> eq(number_visible_hedge,%0) </intension>
+      <args> count </args>
+      <args> 20 </args>
+    </group>
+  </constraints>
+</instance>

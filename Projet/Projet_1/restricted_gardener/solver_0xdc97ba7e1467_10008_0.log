@@ -1,0 +1,55 @@
+
+ACE v2.3 
+
+  instance
+    name:restricted_gardener
+
+  Loading variables...
+
+  Loading constraints...
+
+  domains
+    types:2  values:55  sizes:[2:5,5:9]
+  variables
+    count:14  arrays:3  degrees:[2:2,3:8,4:1,5:1,6:2]
+  constraints
+    count:15  specific:7  arities:[1:2,3:9,4:1,5:2,6:1]
+    distribution:[AllDifferentComplete:1,Extension1:2,Intension:8,Maximum:3,SumWeightedEQ:1]
+    intStructures:(2,shared:6)
+    wck:0.10  cpu:0.453  mem:15M361
+
+  Building solver... 
+
+  solver
+    guaranteedAC:false
+    wck:0.11  cpu:0.468  mem:18M298
+
+  preprocessing
+    effs:2  revisions:(24,useless=24)  values:50  removedByAC:5  unsat:false
+    wck:0.002  cpu:0.468  mem:18M298
+
+    run1  dpts:2..13  effs:28  fails:2  wrgs:2  wck:0.00  ngds:2  sols:1
+
+  global
+    effs:28  revisions:(140,useless=133)  ngds:2
+    stop:REACHED_GOAL  wrgs:2  sols:1  sol1Cpu:0.468
+    wck:0.12  cpu:0.468  mem:18M507
+
+
+  Solution 1 in JSON format:
+   {
+    garden: [1, 2, 5, 4, 3],
+    number_visible_hedge: 3,
+    is_visible: [1, 1, 1, 0, 0],
+    aux_gb: [2, 5, 5]
+   }
+
+s SATISFIABLE
+
+v <instantiation id='sol1' type='solution'> <list> garden[] number_visible_hedge is_visible[] aux_gb[] </list> <values> 1 2 5 4 3   3   1x3 0 0   2 5 5 </values> </instantiation>
+
+d WRONG DECISIONS 2
+d FOUND SOLUTIONS 1
+d INCOMPLETE EXPLORATION
+
+c real time : 0.468

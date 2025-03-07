@@ -1,0 +1,53 @@
+
+ACE v2.3 
+
+  instance
+    name:restricted_gardener
+
+  Loading variables...
+
+  Loading constraints...
+
+  domains
+    types:2  values:441  sizes:[20:21,21:1]
+  variables
+    count:22  arrays:1  degrees:[1:21,2:1]
+  constraints
+    count:3  specific:3  groups:1  arities:[1:1,2:1,20:1]
+    distribution:[AllDifferentComplete:1,Extension1:1,Sub2EQ:1]
+    wck:0.14  cpu:0.593  mem:14M246
+
+  Building solver... 
+
+  solver
+    guaranteedAC:true
+    wck:0.16  cpu:0.593  mem:17M192
+
+  preprocessing
+    effs:2  values:402  removedByAC:39  unsat:false
+    wck:0.001  cpu:0.593  mem:17M192
+
+    run1  dpts:-1..21  effs:21  wck:0.00  sols:1
+
+  global
+    effs:21
+    stop:REACHED_GOAL  sols:1  sol1Cpu:0.609
+    wck:0.17  cpu:0.609  mem:17M370
+
+
+  Solution 1 in JSON format:
+   {
+    garden: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+    number_visible_hedge: 20,
+    count: 20
+   }
+
+s SATISFIABLE
+
+v <instantiation id='sol1' type='solution'> <list> garden[] number_visible_hedge count </list> <values> 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20   20   20 </values> </instantiation>
+
+d WRONG DECISIONS 0
+d FOUND SOLUTIONS 1
+d INCOMPLETE EXPLORATION
+
+c real time : 0.609

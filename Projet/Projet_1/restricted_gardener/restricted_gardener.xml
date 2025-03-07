@@ -1,0 +1,31 @@
+<instance format="XCSP3" type="CSP">
+  <variables>
+    <array id="garden" size="[4]"> 1..4 </array>
+    <var id="number_visible_hedge"> 1..4 </var>
+    <array id="is_visible" size="[4]"> 0 1 </array>
+    <array id="aux_gb" note="aux_gb[i] is the ith auxiliary variable having been automatically introduced" size="[2]"> 1..4 </array>
+  </variables>
+  <constraints>
+    <intension> eq(is_visible[0],1) </intension>
+    <intension> or(le(garden[1],garden[0]),eq(is_visible[1],1)) </intension>
+    <intension> or(gt(garden[1],garden[0]),eq(is_visible[1],0)) </intension>
+    <intension> or(ge(aux_gb[0],garden[2]),eq(is_visible[2],1)) </intension>
+    <intension> or(lt(aux_gb[0],garden[2]),eq(is_visible[2],0)) </intension>
+    <maximum>
+      <list> garden[0] garden[1] </list>
+      <condition> (eq,aux_gb[0]) </condition>
+    </maximum>
+    <intension> or(ge(aux_gb[1],garden[3]),eq(is_visible[3],1)) </intension>
+    <intension> or(lt(aux_gb[1],garden[3]),eq(is_visible[3],0)) </intension>
+    <maximum>
+      <list> garden[0..2] </list>
+      <condition> (eq,aux_gb[1]) </condition>
+    </maximum>
+    <allDifferent> garden[] </allDifferent>
+    <sum>
+      <list> is_visible[] </list>
+      <condition> (eq,number_visible_hedge) </condition>
+    </sum>
+    <intension> eq(number_visible_hedge,2) </intension>
+  </constraints>
+</instance>

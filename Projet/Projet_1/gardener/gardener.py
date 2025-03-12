@@ -1,8 +1,8 @@
 from pycsp3 import *
 
-def solve_gardener(dimension: int, instruction_list: list[list[int]]) -> list[list[int]] | None:
-    instructions_count = len(instruction_list)
-    garden = VarArray(size=(dimension, dimension), dom=range(1, dimension + 1))
+def solve_gardener(instruction_list: list[list[int]]) -> list[list[int]] | None:
+    garden_size = len(instruction_list[0])
+    garden = VarArray(size=(garden_size, garden_size), dom=range(1, garden_size + 1))
 
     for row in garden:
         satisfy(AllDifferent(row))
@@ -13,15 +13,20 @@ def solve_gardener(dimension: int, instruction_list: list[list[int]]) -> list[li
 
     visible_hedges_count = count_matrix_visible_hedges(garden)
 
-    for i in range(instructions_count):
-        for j in range(dimension):
+    for i in range(len(instruction_list)):
+        for j in range(garden_size):
+            print(instruction_list[i][j])
+
             if isinstance(instruction_list[i][j], int) and instruction_list[i][j] > 0:
                 satisfy(visible_hedges_count[i][j] == instruction_list[i][j])
+
+        print('\n')
 
     solve()
 
     if solution():
-        return [[value(garden[i][j]) for j in range(dimension)] for i in range(dimension)]
+        print([[value(garden[i][j]) for j in range(garden_size)] for i in range(garden_size)])
+        return [[value(garden[i][j]) for j in range(garden_size)] for i in range(garden_size)]
 
     return None
 
@@ -71,18 +76,16 @@ def verify_format(solution: list[list[int]], n: int):
 
     return validity
 
-def parse_instance(input_file: str) -> tuple[int, list[list[int]]]:
+def parse_instance(input_file: str) -> list[list[(int, int)]]:
     with open(input_file) as input:
         lines = input.readlines()
-
     n = int(lines[0].strip())
     instructions = []
-
     for line in lines[1:5]:
         instructions.append(list(map(int, line.strip().split(" "))))
         assert len(instructions[-1]) == n
 
-    return n, instructions
+    return instructions
 
 
 if __name__ == "__main__":
@@ -90,9 +93,9 @@ if __name__ == "__main__":
         print("Usage: python3 gardener.py instance_path")
         sys.exit(1)
 
-    n, instructions = parse_instance(sys.argv[1])
-    solution = solve_gardener(n, instructions)
+    instructions = parse_instance(sys.argv[1])
 
+    solution = solve_gardener(instructions)
     if solution is not None:
         if verify_format(solution, len(instructions[0])):
             print("Solution format is valid")

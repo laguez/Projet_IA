@@ -177,7 +177,10 @@ class AlphaBetaAgent(Agent):
             scores.append((note, action))
 
         scores.sort(reverse=True)
-        return [action for _, action in scores]
+        actions_triees = []
+        for _, action in scores:
+            actions_triees.append(action)
+        return actions_triees
 
     def _evaluate(self, etat):
         """

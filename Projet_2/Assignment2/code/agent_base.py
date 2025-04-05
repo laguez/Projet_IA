@@ -34,213 +34,204 @@ class AlphaBetaAgent(Agent):
         super().__init__(player)
         self.depth = depth
         self.memo = {}
-        self.cutoffs = {}
-        self.best_move = None
-        self.time_limit = None
+        self.coups_coupures = {}
+        self.meilleur_coup = None
+        self.limite_temps = None
 
-    def act(self, state, remaining_time):
+    def act(self, etat, temps_restant):
         """
         Détermine le meilleur coup à jouer dans l'état actuel.
 
         Args:
-            state (FenixState): L'état actuel du jeu.
-            remaining_time (float): Temps restant pour jouer (en secondes).
+            etat (FenixState): L'état actuel du jeu.
+            temps_restant (float): Temps restant pour jouer (en secondes).
 
         Returns:
             FenixAction: L'action choisie par l'agent.
         """
-        self.time_limit = remaining_time * 0.9  # marge de sécurité
-        start = time.perf_counter()
-        self.best_move = None
+        self.limite_temps = temps_restant * 0.9  # marge de sécurité
+        debut_temps = time.perf_counter()
+        self.meilleur_coup = None
 
-        # adaptation de la profondeur
-        if remaining_time < 5:
-            depth = 1
-        elif remaining_time < 15:
-            depth = 2
-        elif state.turn < 10:
-            depth = 2
+        if temps_restant < 5:
+            profondeur = 1
+        elif temps_restant < 15:
+            profondeur = 2
+        elif etat.turn < 10:
+            profondeur = 2
         else:
-            depth = self.depth
-            if len(state.pieces) < 10:
-                depth += 1  # plus profond en fin de partie
+            profondeur = self.depth
+            if len(etat.pieces) < 10:
+                profondeur += 1
 
-        # killer moves init
-        self.cutoffs = {}
-        for i in range(depth + 1):
-            self.cutoffs[i] = []
+        self.coups_coupures = {i: [] for i in range(profondeur + 1)}
 
-        score, move = self._alphabeta(state, depth, -math.inf, math.inf, True, start)
+        score, coup = self._alphabeta(etat, profondeur, -math.inf, math.inf, True, debut_temps)
 
-        if move:
-            print("Move : ", move)
-            return move
-        if self.best_move:
-            return self.best_move
+        if coup:
+            print("Coup choisi :", coup)
+            return coup
+        if self.meilleur_coup:
+            return self.meilleur_coup
 
-        # fallback random
-        actions = state.actions()
-        if actions : 
-            return random.choice(actions) 
-        else: 
+        actions_possibles = etat.actions()
+        if actions_possibles:
+            return random.choice(actions_possibles)
+        else:
             return None
 
-    def _alphabeta(self, state, depth, alpha, beta, maximizing, start):
+    def _alphabeta(self, etat, profondeur, alpha, beta, maximisant, debut_temps):
         """
         Implémente l'algorithme Alpha-Beta avec élagage.
 
         Args:
-            state (FenixState): L'état du jeu à analyser.
-            depth (int): Profondeur actuelle de recherche.
+            etat (FenixState): L'état du jeu à analyser.
+            profondeur (int): Profondeur actuelle de recherche.
             alpha (float): Valeur alpha pour l'élagage.
             beta (float): Valeur beta pour l'élagage.
-            maximizing (bool): Indique si on maximise ou minimise.
-            start (float): Temps de début de recherche.
+            maximisant (bool): Indique si on maximise ou minimise.
+            debut_temps (float): Temps de début de recherche.
 
         Returns:
             tuple: Score évalué (float), meilleure action (FenixAction or None).
         """
-        if time.perf_counter() - start > self.time_limit:
-            return self._evaluate(state), None  # trop long
+        if time.perf_counter() - debut_temps > self.limite_temps:
+            return self._evaluate(etat), None
 
-        if depth == 0 or state.is_terminal():
-            return self._evaluate(state), None
+        if profondeur == 0 or etat.is_terminal():
+            return self._evaluate(etat), None
 
-        key = state._hash()
-        if key in self.memo and self.memo[key]['depth'] >= depth:
-            entry = self.memo[key]
-            if depth == self.depth and maximizing:
-                self.best_move = entry['action']
-            return entry['value'], entry['action']
+        cle = etat._hash()
+        if cle in self.memo and self.memo[cle]['depth'] >= profondeur:
+            entree = self.memo[cle]
+            if profondeur == self.depth and maximisant:
+                self.meilleur_coup = entree['action']
+            return entree['value'], entree['action']
 
-        actions = self._order_actions(state, depth)
-        best = None
+        actions = self._order_actions(etat, profondeur)
+        meilleur = None
 
-        if maximizing:
+        if maximisant:
             max_eval = -math.inf
             for action in actions:
-                next_state = state.result(action)
-                val, _ = self._alphabeta(next_state, depth - 1, alpha, beta, False, start)
+                prochain_etat = etat.result(action)
+                val, _ = self._alphabeta(prochain_etat, profondeur - 1, alpha, beta, False, debut_temps)
                 if val > max_eval:
                     max_eval = val
-                    best = action
-                    if depth == self.depth:
-                        self.best_move = action
-                    if action not in self.cutoffs[depth]:
-                        self.cutoffs[depth] = [action] + self.cutoffs[depth][:1]
+                    meilleur = action
+                    if profondeur == self.depth:
+                        self.meilleur_coup = action
+                    if action not in self.coups_coupures[profondeur]:
+                        self.coups_coupures[profondeur] = [action] + self.coups_coupures[profondeur][:1]
                 alpha = max(alpha, val)
                 if beta <= alpha:
                     break
-            self.memo[key] = {'value': max_eval, 'action': best, 'depth': depth}
-            return max_eval, best
+            self.memo[cle] = {'value': max_eval, 'action': meilleur, 'depth': profondeur}
+            return max_eval, meilleur
         else:
             min_eval = math.inf
             for action in actions:
-                next_state = state.result(action)
-                val, _ = self._alphabeta(next_state, depth - 1, alpha, beta, True, start)
+                prochain_etat = etat.result(action)
+                val, _ = self._alphabeta(prochain_etat, profondeur - 1, alpha, beta, True, debut_temps)
                 if val < min_eval:
                     min_eval = val
-                    best = action
-                    if action not in self.cutoffs[depth]:
-                        self.cutoffs[depth] = [action] + self.cutoffs[depth][:1]
+                    meilleur = action
+                    if action not in self.coups_coupures[profondeur]:
+                        self.coups_coupures[profondeur] = [action] + self.coups_coupures[profondeur][:1]
                 beta = min(beta, val)
                 if beta <= alpha:
                     break
-            self.memo[key] = {'value': min_eval, 'action': best, 'depth': depth}
-            return min_eval, best
+            self.memo[cle] = {'value': min_eval, 'action': meilleur, 'depth': profondeur}
+            return min_eval, meilleur
 
-    def _order_actions(self, state, depth):
+    def _order_actions(self, etat, profondeur):
         """
         Trie les actions possibles selon des heuristiques : killer moves, captures, centralité.
 
         Args:
-            state (FenixState): L'état courant du jeu.
-            depth (int): Profondeur actuelle de recherche.
+            etat (FenixState): L'état courant du jeu.
+            profondeur (int): Profondeur actuelle de recherche.
 
         Returns:
             list[FenixAction]: Liste triée des actions les plus prometteuses.
         """
-        moves = state.actions()
-        if not moves:
+        actions_possibles = etat.actions()
+        if not actions_possibles:
             return []
 
-        ordered = []
-        for m in moves:
-            score = 0
+        scores = []
+        for action in actions_possibles:
+            note = 0
 
-            if m in self.cutoffs.get(depth, []):
-                score += 1000
+            if action in self.coups_coupures.get(profondeur, []):
+                note += 1000
 
-            for p in m.removed:
-                val = abs(state.pieces.get(p, 0))
-                score += 500 if val == 3 else 200 if val == 2 else 100
+            for pos_capture in action.removed:
+                valeur_piece = abs(etat.pieces.get(pos_capture, 0))
+                note += 500 if valeur_piece == 3 else 200 if valeur_piece == 2 else 100
 
-            end = m.end
-            center = 3 - abs(3 - end[0]) - abs(4 - end[1])
-            score += center * 5
+            fin = action.end
+            bonus_central = 3 - abs(3 - fin[0]) - abs(4 - fin[1])
+            note += bonus_central * 5
 
-            ordered.append((score, m))
+            scores.append((note, action))
 
-        ordered.sort(reverse=True)
-        return [m for _, m in ordered]
+        scores.sort(reverse=True)
+        return [action for _, action in scores]
 
-    def _evaluate(self, state):
+    def _evaluate(self, etat):
         """
-        Trie les actions possibles selon des heuristiques : killer moves, captures, centralité.
+        Évalue l'état du jeu à l'aide d'une heuristique.
 
         Args:
-            state (FenixState): L'état courant du jeu.
-            depth (int): Profondeur actuelle de recherche.
+            etat (FenixState): L'état courant du jeu.
 
         Returns:
-            list[FenixAction]: Liste triée des actions les plus prometteuses.
+            float: Score évalué pour l'état.
         """
-        if state.is_terminal():
-            return state.utility(self.player) * 1000
+        if etat.is_terminal():
+            return etat.utility(self.player) * 1000
 
         total = 0
-        weights = {1: 10, 2: 30, 3: 1000}  # soldat, général, roi
+        poids_pieces = {1: 10, 2: 30, 3: 1000}  # soldat, général, roi
 
-        for pos, val in state.pieces.items():
-            t = abs(val)
-            owner = 1 if val > 0 else -1
-            sign = 1 if owner == self.player else -1
+        for position, valeur in etat.pieces.items():
+            type_piece = abs(valeur)
+            proprio = 1 if valeur > 0 else -1
+            signe = 1 if proprio == self.player else -1
 
-            base = weights.get(t, 0)
-            center_bonus = 3 - abs(3 - pos[0]) - abs(4 - pos[1])
-            center_val = (2 if t > 1 else 1) * center_bonus * 2
+            base = poids_pieces.get(type_piece, 0)
+            bonus_central = 3 - abs(3 - position[0]) - abs(4 - position[1])
+            val_centrale = (2 if type_piece > 1 else 1) * bonus_central * 2
 
-            advance = 0
-            if state.turn > 10:
-                if owner == 1 and pos[0] < 3:
-                    advance = 4 - pos[0]
-                elif owner == -1 and pos[0] > 3:
-                    advance = pos[0] - 3
-                advance *= 3
+            avancee = 0
+            if etat.turn > 10:
+                if proprio == 1 and position[0] < 3:
+                    avancee = 4 - position[0]
+                elif proprio == -1 and position[0] > 3:
+                    avancee = position[0] - 3
+                avancee *= 3
 
-            # mobilité intégrée ici
-            mobility = 0
+            mobilite = 0
             for dx, dy in [(-1, 0), (0, -1), (1, 0), (0, 1)]:
-                n = (pos[0] + dx, pos[1] + dy)
-                if state._is_inside(n) and n not in state.pieces:
-                    mobility += 1
-            mobility *= 2 if owner == state.to_move() else 0
+                voisin = (position[0] + dx, position[1] + dy)
+                if etat._is_inside(voisin) and voisin not in etat.pieces:
+                    mobilite += 1
+            mobilite *= 2 if proprio == etat.to_move() else 0
 
-            # isolement (amis autour)
-            friends = 0
+            allies = 0
             for dx, dy in [(-1, 0), (0, -1), (1, 0), (0, 1)]:
-                n = (pos[0] + dx, pos[1] + dy)
-                if n in state.pieces and state.pieces[n] * owner > 0:
-                    friends += 1
-            isolation = max(0, 4 - friends)
+                voisin = (position[0] + dx, position[1] + dy)
+                if voisin in etat.pieces and etat.pieces[voisin] * proprio > 0:
+                    allies += 1
+            isolement = max(0, 4 - allies)
 
-            score = base + center_val + advance + mobility - isolation
-            total += sign * score
+            score = base + val_centrale + avancee + mobilite - isolement
+            total += signe * score
 
-        # menaces adverses (résurrections)
-        if state.can_create_king and state.to_move() == -self.player:
+        if etat.can_create_king and etat.to_move() == -self.player:
             total -= 500
-        if state.can_create_general and state.to_move() == -self.player:
+        if etat.can_create_general and etat.to_move() == -self.player:
             total -= 100
 
         print("Évaluation finale:", total)

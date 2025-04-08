@@ -2,22 +2,13 @@ import math
 import random
 import time
 from fenix import FenixAction
+from agent import Agent
 
 
-class Agent:
-    def __init__(self, player_id):
-        """Initialise l'agent avec son identifiant de joueur (1 ou -1)."""        
-        self.player = player_id
-
-    def act(self, state, remaining_time):
-        """Doit être redéfini dans les sous-classes pour choisir une action."""        
-        raise Exception("Méthode à implémenter dans une sous-classe.")
-
-
-class AlphaBetaAgent(Agent):
-    def __init__(self, player_id, search_depth=3):
+class BaseAgent(Agent):
+    def __init__(self, player, search_depth=3):
         """Agent utilisant l'algorithme alpha-bêta, avec une profondeur de recherche donnée."""
-        super().__init__(player_id)
+        super().__init__(player)
         self.depth = search_depth
         self.time_limit = None
 
@@ -44,7 +35,7 @@ class AlphaBetaAgent(Agent):
             return chosen_move
 
         return random.choice(moves)
-
+    
     def heuristique(self, move, state):
         """
         Évalue rapidement un coup : favorise les captures importantes et les bonnes positions.
@@ -119,7 +110,7 @@ class AlphaBetaAgent(Agent):
 
         for position, piece in state.pieces.items():
             abs_val = abs(piece)
-            val = {1: 1, 2: 3, 3: 5}.get(abs_val, 0)
+            val = {1: 1, 2: 3, 3: 5}.get(abs_val, 0) # soldat, general, roi 
 
             r, c = position
             center_dist = abs(r - state.dim[0] // 2) + abs(c - state.dim[1] // 2)

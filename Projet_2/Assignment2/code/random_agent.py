@@ -1,4 +1,4 @@
-from agent_base import Agent
+from agent import Agent
 import random
 import fenix
 
